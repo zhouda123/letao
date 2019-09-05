@@ -47,4 +47,45 @@ $(function() {
       }
     }
   })
+
+  /*
+  2.注册表单校验成功事件,在校验成功时,会触发 在事件中组织默认的提交(会跳转),通过ajax进行提交(异步)
+  */
+  $('#form').on('success.form.bv', function(e) {
+    //阻止默认提交
+    e.preventDefault()
+    //通过 ajax 提交
+    $.ajax({
+      type: 'post',
+      url: '/employee/employeeLogin',
+      data: $('#form').serialize(), //表单序列号
+      dataType: 'json',
+      success: function(info) {
+        console.log(info)
+        if (info.success) {
+          //成功 跳转到首页
+          location.href = 'index.html'
+        }
+        if (info.error === 1000) {
+          alert('用户名不存在')
+        }
+        if (info.error === 1001) {
+          alert('密码错误')
+        }
+      }
+    })
+  })
+  /*
+  3.表单重置功能
+  $('#form').data('bootstrapValidator')创建插件实例
+  resetForm() 没传参或者传false 只会重置校验状态
+  resetForm(true)内容和校验状态都重置
+
+  由于reset按钮,本身就可以重置内容,所以上面两个需要的是重置状态
+  */
+  $('[type="reset"]').click(function() {
+    $('#form')
+      .data('bootstrapValidator')
+      .resetForm(true)
+  })
 })
